@@ -6,10 +6,7 @@ function getAugmentedNamespace(n) {
 	if (typeof f == "function") {
 		var a = function a () {
 			if (this instanceof a) {
-				var args = [null];
-				args.push.apply(args, arguments);
-				var Ctor = Function.bind.apply(f, args);
-				return new Ctor();
+        return Reflect.construct(f, arguments, this.constructor);
 			}
 			return f.apply(this, arguments);
 		};
@@ -142,7 +139,7 @@ var lib$6 = {};
 	/** Type for <![CDATA[ ... ]]> */
 	exports.CDATA = ElementType.CDATA;
 	/** Type for <!doctype ...> */
-	exports.Doctype = ElementType.Doctype;
+	exports.Doctype = ElementType.Doctype; 
 } (lib$6));
 
 var node = {};
@@ -785,7 +782,7 @@ function cloneChildren(childs) {
 	    return DomHandler;
 	}());
 	exports.DomHandler = DomHandler;
-	exports.default = DomHandler;
+	exports.default = DomHandler; 
 } (lib$7));
 
 var lib$5 = {};
@@ -23650,7 +23647,7 @@ const hun = [
   'alóluk',
   'alólunk',
   'amely',
-  'amelybol',
+  'amelyből',
   'amelyek',
   'amelyekben',
   'amelyeket',
@@ -32775,30 +32772,27 @@ const zul = [
   'ngelinye'
 ];
 
-const defaultStopwords = eng;
-
-const removeStopwords = function (tokens, stopwords) {
-  stopwords = stopwords || defaultStopwords;
-  if (typeof tokens !== 'object' || typeof stopwords !== 'object') {
+// default to english stopword list
+const removeStopwords = (tokens, stopwords = eng) => {
+  if (!Array.isArray(tokens) || !Array.isArray(stopwords)) {
     throw new Error('expected Arrays try: removeStopwords(Array[, Array])')
   }
-  return tokens.filter(function (value) {
-    return stopwords.indexOf(value.toLowerCase()) === -1
-  })
+  return tokens.filter(x => !stopwords.includes(x.toLowerCase()))
 };
 
 const words = '\\p{Alpha}+[\'’?]\\p{Alpha}+[\'’?]\\p{Alpha}+|\\p{Alpha}+[\'’?]\\p{Alpha}+|\\p{Alpha}+';
 const numbers = '\\p{Number}+';
-const emojis = '\\p{Emoji_Presentation}';
 const tags = '\\B[#][\\p{Alpha}|\\p{Number}]+';
 const usernames = '\\B[@][\\p{Alpha}|\\p{Number}]+';
 const email = '[0-9a-zA-Z!#$%&\'*+-/=?^_`{|}~.]+@[0-9a-zA-Z-.]+[a-zA-Z0-9]';
+const emojis = '\\p{Emoji_Presentation}';
 
 const extract = function (string, options) {
   // Default options object
   const defaultOptions = {
     regex: words,
-    toLowercase: false
+    toLowercase: false,
+    flags: 'gui'
   };
 
   // Populate regex and options objects
@@ -32823,7 +32817,7 @@ const extract = function (string, options) {
   }
 
   // regex constructor
-  const regex = new RegExp(options.regex, 'giu');
+  const regex = new RegExp(options.regex, options.flags);
 
   // match words (and numbers and emojis)
   let extracted = [];
