@@ -19,7 +19,7 @@
     "nlp"
   ],
   "dependencies": {
-    "cheerio": "1.0.0-rc.12",
+    "cheerio": "1.0.0",
     "eklem-headline-parser": "^4.0.3",
     "hit-highlighter": "^4.0.1",
     "leven-match": "^2.0.3",
